@@ -1,0 +1,46 @@
+{% extends 'social/base.html' %}
+{% block title %}{{ view.kwargs.username }} groups{% endblock title %}
+{% block body %}
+<h1>Groups by: {{ view.kwargs.username }}</h1>
+    {% if group_list %}
+        {% for group in group_list %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{% url 'accounts:profile' group.creator.pk %}">{{ group.creator }}</a>
+                        <small class="text-muted">
+                            {{ group.group_created|date:"d. F Y" }} | Members : {{ group.members.count }}
+                        </small>
+                    </div>
+                    <h2><a class="article-title" href="{% url 'social:group_detail' group.slug %}">{{ group.name }}</a></h2>
+                    <p class="article-content">{{ group.description|slice:'120' }}...</p>
+                </div>
+            </article>
+        {% endfor %}
+        {% comment %} Pagination {% endcomment %}
+        {% if is_paginated %}
+            <nav>
+                <ul class="pagination pagination-sm mb-2">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        {% comment %} Pagination {% endcomment %}
+    {% else %}
+        <h3>No groups yet. {% if user.is_authenticated and joined %}<a href="{% url 'social:group_create' %}">Create One.</a>{% endif %}</h3>
+    {% endif %}
+{% endblock body %}

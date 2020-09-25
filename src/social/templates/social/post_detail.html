@@ -1,0 +1,47 @@
+{% extends 'social/base.html' %}
+{% block title %}{{ post.title }}{% endblock title %}
+{% block body %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <small class="text-muted">
+                Creator : <a class="mr-2" href="{% url 'accounts:profile' post.owner.pk %}">
+                    {{ post.owner }}
+                </a>
+            </small>
+            <small class="text-muted">Created : {{ post.post_created|date:"d. F Y, G:i" }}
+                | Like{{ post.likes.count|pluralize }}: {{ post.likes.count }}
+                {% comment %} For comments {% endcomment %}
+                {% comment %} <a class='btn btn-outline-info btn-sm'
+                    href="{% url 'social:post_list' group.slug %}">{{ group.post_set.count }}
+                    Post{{ group.post_set.count|pluralize }}</a> {% endcomment %}
+                {% if post.owner.id == request.user.id %}
+                <a class="badge badge-danger" href="{% url 'social:post_delete' post.on_group.slug post.pk %}"
+                    style="text-decoration: none">
+                    Delete post
+                </a>
+                <a class="badge badge-info" href="{% url 'social:post_edit' post.on_group.slug post.pk %}"
+                    style="text-decoration: none">
+                    Edit Post
+                </a>
+                {% endif %}
+            </small>
+        </div>
+        <h2 class="article-title">{{ post.title }}</h2>
+        <p class="article-content">{{ post.context }}</p>
+        <form action="{% url 'social:post_like' post.on_group.slug post.pk %}" method="POST">
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+            {% if liked %}
+            <button class='btn btn-outline-info btn-sm' type="submit" name="post_id"
+                value="{{ post.id }}">Unlike</button>
+            {% else %}
+            <button class='btn btn-outline-info btn-sm' type="submit" name="post_id" value="{{ post.id }}">Like</button>
+            {% endif %}
+            {% else %}
+            <small><a class='btn btn-outline-info btn-sm' href="{% url 'accounts:login' %}">Login to Join </a></small>
+            {% endif %}
+        </form>
+    </div>
+</article>
+{% endblock body %}

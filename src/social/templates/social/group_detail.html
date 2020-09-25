@@ -1,0 +1,46 @@
+{% extends 'social/base.html' %}
+{% block title %}{{ group.name }}{% endblock title %}
+{% block body %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <small class="text-muted">
+                Creator : <a class="mr-2" href="{% url 'accounts:profile' group.creator.pk %}">
+                    {{ group.creator }}
+                </a>
+            </small>
+            <small class="text-muted">Created : {{ group.group_created|date:"d. F Y, G:i" }}
+                <a class='btn btn-outline-info btn-sm'
+                    href="{% url 'social:post_list' group.slug %}">{{ group.post_set.count }}
+                    Post{{ group.post_set.count|pluralize }}</a>
+                {% if group.creator.id == request.user.id %}
+                <a class="badge badge-danger" href="{% url 'social:group_delete' group.slug %}"
+                    style="text-decoration: none">
+                    Delete Group
+                </a>
+                {% endif %}
+            </small>
+        </div>
+        <h2 class="article-title">{{ group.name }}</h2>
+        <p class="article-content">{{ group.description }}</p>
+            Members: {{ group.members.count }} <a href="{% url 'social:group_members' group.slug %}">
+                View Members
+            </a>
+        <form action="{% url 'social:group_join' group.slug %}" method="POST">
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+            {% if joined %}
+            <button class='btn btn-outline-info btn-sm' type="submit" name="group_id" value="{{ group.id }}">Leave
+                Group</button>
+            {% else %}
+            <button class='btn btn-outline-info btn-sm' type="submit" name="group_id" value="{{ group.id }}">Join
+                Group</button>
+            {% endif %}
+            {% else %}
+            <small><a class='btn btn-outline-info btn-sm' href="{% url 'accounts:login' %}">Login to Join </a></small>
+            {% endif %}
+        </form>
+    </div>
+</article>
+
+{% endblock body %}

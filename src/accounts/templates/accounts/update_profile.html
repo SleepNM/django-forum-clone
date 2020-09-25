@@ -1,0 +1,23 @@
+{% extends 'social/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Update Profile{% endblock title %}
+{% block body %}
+    <div class="content-section">
+            <form method="POST" enctype='multipart/form-data'>
+                {% csrf_token %}
+                <fieldset class='form-group'>
+                    <legend class='border-bottom mb-4'>Update Profile</legend>
+                    {{ u_form|crispy }}
+                    {{ p_form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <button class='btn btn-outline-info' type='submit'>Confirm</button>
+                </div>
+            </form>
+            <div class="border-top pt-3">
+                <small class='text-muted'>
+                    Change password <a href="{% url 'accounts:pwchange' %}">here.</a>
+                </small>
+            </div>
+    </div>
+{% endblock body %}

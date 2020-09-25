@@ -1,0 +1,59 @@
+{% extends 'social/base.html' %}
+{% block title %}Potst in group{% endblock title %}
+{% block body %}
+    {% if post_list %}
+    <h1>Posts in: {{ post_list.first.on_group.name }}</h1>
+        {% if user.is_authenticated and joined %}
+            <a href="{% url 'social:post_create' post_list.first.on_group.slug %}">Add a post</a>
+        {% endif %}
+        {% for post in post_list %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{% url 'accounts:profile' post.owner.pk %}">{{ post.owner }}</a>
+                        <small class="text-muted">
+                            {{ post.post_created|date:"d. F Y" }} | Like{{ post.likes.count|pluralize }}: 
+                            {{ post.likes.count }}
+                            {% if post.owner.id == request.user.id %}
+                                <a class="badge badge-danger" href="{% url 'social:post_delete' post.on_group.slug post.pk %}" style="text-decoration: none">
+                                    Delete Post
+                                </a>
+                                <a class="badge badge-info" href="{% url 'social:post_edit' post.on_group.slug post.pk %}" style="text-decoration: none">
+                                    Edit Post
+                                </a>
+                            {% endif %}
+                        </small>
+                    </div>
+                    <h2><a class="article-title" href="{% url 'social:post_detail' post.on_group.slug post.pk %}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.context }}</p>
+                </div>
+            </article>
+        {% endfor %}
+        {% comment %} Pagination {% endcomment %}
+        {% if is_paginated %}
+            <nav>
+                <ul class="pagination pagination-sm mb-2">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        {% comment %} Pagination {% endcomment %}
+    {% else %}
+        <h3>No posts yet. {% if user.is_authenticated %}<a href="{% url 'social:post_create' view.kwargs.slug %}">Create One.</a>{% endif %}</h3>
+    {% endif %}
+{% endblock body %}
+

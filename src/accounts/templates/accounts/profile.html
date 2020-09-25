@@ -1,0 +1,29 @@
+{% extends 'social/base.html' %}
+{% block title %}{{ user.username }} profile.{% endblock title %}
+{% block body %}
+<div class="content-section">
+  <div class="media">
+    <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+    <div class="media-body">
+      <div class="row">
+        <div class="col-sm-8 mr-0 pr-0">
+          <h4 class="account-heading">{{ user.username }}</h4>
+          <p class="text-secondary">{{ user.email }}</p>
+          <p class="text-secondary">{{ user.first_name }} {{ user.last_name }}</p>
+          <p class="text-secondary">Folloving: <a href="{% url 'social:user_groups_folowing' user.username %}">{{ user.group_set.count }} Group{{ user.group_set.count|pluralize }}</a></p>
+        </div>
+        <div class="col-sm-4 pl-15 ">
+          <h4 class="account-heading">User Created:</h4>
+          <p><a href="{% url 'social:user_groups' user.username %}">Group{{ user.group_set.count|pluralize }}: {{ user.group_set.count }}</a></p>
+          <p><a href="{% url 'social:user_posts' user.username %}">Post{{ user.post_set.count|pluralize }}: {{ user.post_set.count }}</a></p>
+          <p><a href="">Comments</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+    {% if user.is_authenticated and user.id == request.user.id %}
+      <a href="{% url 'accounts:update' %}">Update Profile</a>
+    {% endif %}
+</div>
+
+{% endblock body %}

@@ -1,0 +1,15 @@
+{% extends 'social/base.html' %}
+{% block title %}Group members{% endblock title %}
+{% block body %}
+<h1>Group "{{ group.name }}" Members:</h1>
+{% if group.members.count %}
+    {% for member in group.members.all %}
+        <p>Member {{ forloop.counter }}: 
+        <a href="{% url 'accounts:profile' member.pk %}">
+            {{ member.username }}
+        </a></p>
+    {% endfor %}
+{% else %}
+<small>No members yet.</small>
+{% endif %}
+{% endblock body %}

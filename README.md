@@ -1,12 +1,3 @@
-# django-forum-clone
+# Social Media Clone
 
-Forum clone with authentication,
-creating and joining groups,
-posnting on groups,
-editing and deleting posts,
-liking posts,
-comenting on posts(work in progres),
-viewing user profiles,
-sorting by user, likes, groups etc,
-home page is showing you the most popular groups you have joined,
-and much more
+Simple app with a lot of features like: authentication, creating and joining groups, posting on groups, editing and deleting posts, liking posts, commenting on posts(work in progres), viewing other users profiles, sorting by user, likes, groups etc, home page is showing you the most popular groups you have joined, and much more...
